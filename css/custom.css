@@ -9,3 +9,7 @@
     float: left;
     margin-right: 20px;
 }
+
+.list-item .meta{
+    flex-basis : 8em;
+}
