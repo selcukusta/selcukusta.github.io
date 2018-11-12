@@ -5,7 +5,7 @@
     <link>/</link>
     <description>Recent content on Selçuk Usta</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0300</lastBuildDate>
+    <lastBuildDate>Mon, 12 Nov 2018 00:00:00 +0300</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -13,10 +13,11 @@
     <item>
       <title>Etkinlik Takvimi</title>
       <link>/event-calendar/</link>
-      <pubDate>Fri, 21 Sep 2018 00:00:00 +0300</pubDate>
+      <pubDate>Mon, 12 Nov 2018 00:00:00 +0300</pubDate>
       
       <guid>/event-calendar/</guid>
-      <description>Gelecek Etkinlikler    ETKİNLİK BAŞLIK TARİH     dotnetKonf Building Clean Infrastructure with AWS CodePipeline 📆 3 Kasım 2018    Geçmiş Etkinlikler    ETKİNLİK BAŞLIK TARİH     ICT Conf&amp;rsquo;18 Yüksek Erişilebilir Sistemler Tasarlamak 📆 27 Ekim 2018   dotnet istanbul .NET Core Mikroservis Uygulamalarında Konfigürasyon Yönetimi 📆 04 Eylül 2018   dotnet istanbul ASP.NET Core 2.1 - SignalR Yenilikleri 📆 26 Haziran 2018   Özgür Yazılım Linux Günleri 2018 Yeni Nesil Büyük Atlas: Elasticsearch 📆 13 Mayıs 2018   Microsoft Türkiye - Xamarin İstanbul Meetup Xamarin.</description>
+      <description>Gelecek Etkinlikler Planlanan etkinlikler buradan duyurulacaktır.
+Geçmiş Etkinlikler    ETKİNLİK BAŞLIK TARİH     dotnetKonf Building Clean Infrastructure with AWS CodePipeline 📆 3 Kasım 2018   ICT Conf&amp;rsquo;18 Yüksek Erişilebilir Sistemler Tasarlamak 📆 27 Ekim 2018   dotnet istanbul .NET Core Mikroservis Uygulamalarında Konfigürasyon Yönetimi 📆 04 Eylül 2018   dotnet istanbul ASP.NET Core 2.1 - SignalR Yenilikleri 📆 26 Haziran 2018   Özgür Yazılım Linux Günleri 2018 Yeni Nesil Büyük Atlas: Elasticsearch 📆 13 Mayıs 2018   Microsoft Türkiye - Xamarin İstanbul Meetup Xamarin.</description>
     </item>
     
     <item>
