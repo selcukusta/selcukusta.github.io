@@ -5,7 +5,7 @@
     <link>/</link>
     <description>Recent content on Selçuk Usta</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 05 May 2019 00:00:00 +0300</lastBuildDate>
+    <lastBuildDate>Mon, 02 Sep 2019 00:00:00 +0300</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -13,11 +13,10 @@
     <item>
       <title>Etkinlik Takvimi</title>
       <link>/event-calendar/</link>
-      <pubDate>Sun, 05 May 2019 00:00:00 +0300</pubDate>
+      <pubDate>Mon, 02 Sep 2019 00:00:00 +0300</pubDate>
       
       <guid>/event-calendar/</guid>
-      <description>Gelecek Etkinlikler Planlanan etkinlikler buradan duyurulacaktır.
-Geçmiş Etkinlikler    ETKİNLİK BAŞLIK TARİH     Global Azure Bootcamp - İstanbul Running Stateful Applications on Azure Container Instances 📆 27 Nisan 2019   dotnetKonf Building Clean Infrastructure with AWS CodePipeline 📆 3 Kasım 2018   ICT Conf&amp;rsquo;18 Yüksek Erişilebilir Sistemler Tasarlamak 📆 27 Ekim 2018   dotnet istanbul .NET Core Mikroservis Uygulamalarında Konfigürasyon Yönetimi 📆 04 Eylül 2018   dotnet istanbul ASP.</description>
+      <description>Gelecek Etkinlikler    ETKİNLİK BAŞLIK TARİH     .NET Conf 2019 Turkey Docker, Kubernetes, .NET Core 📆 28 Eylül 2019    Geçmiş Etkinlikler    ETKİNLİK BAŞLIK TARİH     Global Azure Bootcamp - İstanbul Running Stateful Applications on Azure Container Instances 📆 27 Nisan 2019   dotnetKonf Building Clean Infrastructure with AWS CodePipeline 📆 3 Kasım 2018   ICT Conf&amp;rsquo;18 Yüksek Erişilebilir Sistemler Tasarlamak 📆 27 Ekim 2018   dotnet istanbul .</description>
     </item>
     
     <item>
