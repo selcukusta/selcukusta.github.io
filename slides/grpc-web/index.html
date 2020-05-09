@@ -1,0 +1,367 @@
+<!doctype html><html><head><title>.NET Core gRPC Servislerini Tarayıcı Uygulamalarından Tüketmek</title><meta charset=utf-8><style>@import "https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz&subset=latin,latin-ext";@import "https://fonts.googleapis.com/css?family=Quicksand:400,700,400italic&subset=latin,latin-ext";@import "https://fonts.googleapis.com/css?family=Fira+Code:400,700,400italic&subset=latin,latin-ext";body,.remark-slide-content{font-family:quicksand;background-color:#e5e5e5}h1,h2,h3{font-family:yanone kaffeesatz;font-weight:400}.remark-code,.remark-inline-code{font-family:fira code}img{max-width:100%}.cols{display:flex}.c30{flex:30%}.c70{flex:70%}.ref{font-size:8pt}.w35{width:35%}</style></head><body><textarea id=source>
+class: middle, center
+
+# .NET Core gRPC SERVİSLERİNİ TARAYICI UYGULAMALARINDAN TÜKETMEK
+
+---
+
+class: middle, center
+
+![Cover](assets/cover.png)
+
+---
+
+# AJANDA
+
+- Kısa Bir gRPC Girişi
+- HTTP/2 Konseptine Genel Bakış
+- gRPC Uygulamalarının Temel Gereksinimleri
+  - Server
+  - Backend Client
+  - Web Client
+- Web Client tarafından Tüketilecek Servisin Deployment Senaryoları
+- Implementasyon Örnekleri (Demo)
+
+---
+
+class: middle, center
+
+# KISA BİR gRPC GİRİŞİ
+
+---
+
+`.NET` ekosisteminde `WCF` servislerle çalışmış kişiler için hem terminoloji hem de uygulama geliştirme bakımından benzer noktaları oldukça fazla.
+
+.center[![:scale 40%](assets/wcf-grpc.png)]
+
+---
+
+#### Unary &lt;sup&gt;WCF - Request/Reply&lt;/sup&gt;
+
+İstemciden gelen soruya sunucunun kısa cevap vermesi senaryosu _(&#34;kullanıcı bu mail ve şifre ile giriş yapabilir mi? / Evet&#34;)_.
+
+---
+
+#### Unary &lt;sup&gt;WCF - Request/Reply&lt;/sup&gt;
+
+İstemciden gelen soruya sunucunun kısa cevap vermesi senaryosu _(&#34;kullanıcı bu mail ve şifre ile giriş yapabilir mi? / Evet&#34;)_.
+
+#### Server Streaming &lt;sup&gt;WCF - Duplex&lt;/sup&gt;
+
+Sunucunun istemciye, görece büyük boyutlu bir rapor iletmesi senaryosu. Sunucu mesajı aldıktan sonra istemciye, &#34;mesaj tamamen iletildi&#34; türünde ve ek metadata&#39;larla son bir mesaj iletebilir.
+
+---
+
+#### Unary &lt;sup&gt;WCF - Request/Reply&lt;/sup&gt;
+
+İstemciden gelen soruya sunucunun kısa cevap vermesi senaryosu _(&#34;kullanıcı bu mail ve şifre ile giriş yapabilir mi? / Evet&#34;)_.
+
+#### Server Streaming &lt;sup&gt;WCF - Duplex&lt;/sup&gt;
+
+Sunucunun istemciye, görece büyük boyutlu bir rapor iletmesi senaryosu. Sunucu mesajı aldıktan sonra istemciye, &#34;mesaj tamamen iletildi&#34; türünde ve ek metadata&#39;larla son bir mesaj iletebilir.
+
+#### Client Streaming &lt;sup&gt;WCF - One Way&lt;/sup&gt;
+
+İstemcinin sunucuya, görece büyük boyutlu bir rapor yüklemesi senaryosu. Sunucu mesajı aldıktan sonra istemciye, &#34;mesaj tamamen alındı&#34; türünde ve ek metadata&#39;larla son bir mesaj iletebilir.
+
+---
+
+#### Unary &lt;sup&gt;WCF - Request/Reply&lt;/sup&gt;
+
+İstemciden gelen soruya sunucunun kısa cevap vermesi senaryosu _(&#34;kullanıcı bu mail ve şifre ile giriş yapabilir mi? / Evet&#34;)_.
+
+#### Server Streaming &lt;sup&gt;WCF - Duplex&lt;/sup&gt;
+
+Sunucunun istemciye, görece büyük boyutlu bir rapor iletmesi senaryosu. Sunucu mesajı aldıktan sonra istemciye, &#34;mesaj tamamen iletildi&#34; türünde ve ek metadata&#39;larla son bir mesaj iletebilir.
+
+#### Client Streaming &lt;sup&gt;WCF - One Way&lt;/sup&gt;
+
+İstemcinin sunucuya, görece büyük boyutlu bir rapor yüklemesi senaryosu. Sunucu mesajı aldıktan sonra istemciye, &#34;mesaj tamamen alındı&#34; türünde ve ek metadata&#39;larla son bir mesaj iletebilir.
+
+#### Bidirectional Streaming &lt;sup&gt;WCF - Full Duplex&lt;/sup&gt;
+
+Sunucunun ve istemcinin birbirlerini beklemesine gerek kalmadan (asenkron) birbirleriyle mesajlaşabildikleri ya da sıralı bir şekilde (ping-pong) mesajlaşabildikleri senaryo. Gerçek zamanlı mesajlaşma uygulamaları, health-check ve monitoring sistemleri gibi örnekler bu senaryoya uygundur.
+
+---
+
+class: middle, center
+
+# Unary
+
+## vs
+
+# Streaming
+
+---
+
+.center[
+#Unary
+]
+
+.cols[
+.c30[
+
+- (Un)?Blocking
+
+- Süreli işlem
+
+- Başı sonu belli mesaj içeriği
+
+- ⚠ Memory kullanımı
+  ]
+
+.c70[
+![:scale 90%](assets/unary.jpg)
+]
+
+]
+
+---
+
+.center[
+#Streaming
+]
+
+.cols[
+.c70[
+![:scale 90%](assets/streaming.jpg)
+]
+
+.c30[
+
+- Memory optimizasyonu
+
+- Sıra garantisi
+
+- Zincirleme işlemler
+
+- Süresiz işlem parçaları
+
+- ⚠ Timeout/Deadline
+
+- Lazy data
+
+]
+
+]
+
+.ref[
+
+[Using gRPC for Long-lived and Streaming RPCs - Eric Anderson, Google](https://www.youtube.com/watch?v=Naonb2XD_2Q)
+
+]
+
+---
+
+## Deadline
+
+gRPC istemcileri, sunuculara ne kadar süre bekleyeceğini söyleyebilirler; sunucular ise cevap dönebilmek için ne kadar süreleri kaldığını kontrol edebilirler. Bazı dillerde `timeout` olarak da adlandırılır.
+
+.center[![:scale 60%](assets/deadline.jpg)]
+
+---
+
+## Metadata
+
+Sunucu ve istemcinin payload dışında birbirlerine iletmek istedikleri - metinsel ya da binary - ifadeler `metadata` özelliği ile taşınır. `Authorization` için temel gereksinimdir.
+
+Metadata&#39;lar anahtar değer ikilisi şeklindedir, gRPC-Web çözümünde ise header bilgisi olarak iletilir.
+
+⚠ **gRPC-Web&#39;de `CORS` tanımlarına dikkat edilmelidir!**
+
+---
+
+class: middle, center
+
+# HTTP/2
+
+---
+
+**gRPC** konseptine giriş yapıldığında karşılaşılan ilk kavram HTTP/2 oluyor. Her ne kadar gRPC&#39;nin temel konsepti HTTP/1.1&#39;in sağladığı özelliklerle kapsanıyor olsa dahi geliştirici ekip HTTP/1.1 desteği sunmamakta kararlı.
+
+---
+
+**gRPC** konseptine giriş yapıldığında karşılaşılan ilk kavram HTTP/2 oluyor. Her ne kadar gRPC&#39;nin temel konsepti HTTP/1.1&#39;in sağladığı özelliklerle kapsanıyor olsa dahi geliştirici ekip HTTP/1.1 desteği sunmamakta kararlı.
+
+## Peki, nedir bu HTTP/2?
+
+**HTTP/1.1**’in temel özelliklerine (en temel örnekle request/response header’ları gibi) dokunulmadan, semantik değişiklerle, network’ün daha efektif (eşzamanlılık, düşük gecikme, verimli kaynak kullanımı) kullanılabilmesi için ortaya çıkmış bir uygulama seviyesi protokolü (ALP).
+
+---
+
+**Daniel Stenberg** _(curl ve libcurl&#39;ün yaratıcısı)_ HTTP/2 hakkında net olarak şu özellikleri öne çıkarıyor;
+
+- En küçük iletişim birimi olan frameleri (data ve header bilgilerini taşıyan paketler) sıralı bir şekilde bir mesaj haline getiriyor ve bu mesajların iki yönlü haberleşme yöntemi (stream) ile istemci - sunucu arasında taşınmasını sağlıyor.
+
+.center[![:scale 55%](assets/frame.svg)]
+
+---
+
+**Daniel Stenberg** _(curl ve libcurl&#39;ün yaratıcısı)_ HTTP/2 hakkında net olarak şu özellikleri öne çıkarıyor;
+
+- En küçük iletişim birimi olan frameleri (data ve header bilgilerini taşıyan paketler) sıralı bir şekilde bir mesaj haline getiriyor ve bu mesajların iki yönlü haberleşme yöntemi (stream) ile istemci - sunucu arasında taşınmasını sağlıyor.
+
+- Tüm bu taşıma işlemini HTTP/1.1’in aksine her yeni request/response işleminde yeni bir TCP bağlantısı açmadan, tek bir bağlantı ile yürütebiliyor _(HTTP/1.1 KeepAlive ile bu soruna ufak bir çözüm)_.
+
+---
+
+class: middle, center
+
+[![:scale 55%](assets/http2.png)](https://imagekit.io/demo/http2-vs-http1)
+
+---
+
+**Daniel Stenberg** _(curl ve libcurl&#39;ün yaratıcısı)_ HTTP/2 hakkında net olarak şu özellikleri öne çıkarıyor;
+
+- En küçük iletişim birimi olan frameleri (data ve header bilgilerini taşıyan paketler) sıralı bir şekilde bir mesaj haline getiriyor ve bu mesajların iki yönlü haberleşme yöntemi (stream) ile istemci - sunucu arasında taşınmasını sağlıyor.
+
+- Tüm bu taşıma işlemini HTTP/1.1’in aksine her yeni request/response işleminde yeni bir TCP bağlantısı açmadan, tek bir bağlantı ile yürütebiliyor _(HTTP/1.1 KeepAlive ile bu soruna ufak bir çözüm)_.
+
+- Bu artılara ek olarak iletişimi yine HTTP/1.1’in aksine düz metin olarak (JSON, XML) değil de binary olarak sağlaması da hem paketlerin küçülmesine hem de insan gözüyle okunamamasına olanak sağlıyor.
+
+---
+
+**Daniel Stenberg** _(curl ve libcurl&#39;ün yaratıcısı)_ HTTP/2 hakkında net olarak şu özellikleri öne çıkarıyor;
+
+- En küçük iletişim birimi olan frameleri (data ve header bilgilerini taşıyan paketler) sıralı bir şekilde bir mesaj haline getiriyor ve bu mesajların iki yönlü haberleşme yöntemi (stream) ile istemci - sunucu arasında taşınmasını sağlıyor.
+
+- Tüm bu taşıma işlemini HTTP/1.1’in aksine her yeni request/response işleminde yeni bir TCP bağlantısı açmadan, tek bir bağlantı ile yürütebiliyor _(HTTP/1.1 KeepAlive ile bu soruna ufak bir çözüm)_.
+
+- Bu artılara ek olarak iletişimi yine HTTP/1.1’in aksine düz metin olarak (JSON, XML) değil de binary olarak sağlaması da hem paketlerin küçülmesine hem de insan gözüyle okunamamasına olanak sağlıyor.
+
+- Şifrelenmiş (TLS ile) ve şifrelenmemiş olarak kullanım desteği var ancak browser’lar h2c olarak ifade edilen unencrypted HTTP/2 iletişimini desteklemiyor. Dolayısıyla HTTP/2 kullanımı, web uygulamalarının güvenliği konusunda da bir standart oluşturmuş pozisyonda.
+
+---
+
+class: middle, center
+
+![:scale 90%](https://media.giphy.com/media/Ax1JUM9QI942Y/source.gif)
+
+---
+
+Günümüzün tüm modern web uygulamaları, web sunucuları, proxy sunucuları, yük dağıtıcı uygulamalar _(HAProxy, Nginx, Apache, Envoy, IIS &gt;= 10.0, vb.)_ HTTP/2 desteği sunuyor.
+
+Yapılması gereken ufak bir kaç küçük konfigürasyonla da uygulamalarınızı HTTP/2 protokolü üzerinden sunabiliyor:
+
+**HAProxy**
+
+```
+frontend myapp
+    bind :443 ssl crt /path/to/cert.crt alpn h2,http/1.1
+```
+
+**Nginx**
+
+```
+listen 443 ssl http2 default_server;
+```
+
+**Apache**
+
+```
+LoadModule http2_module modules/mod_http2.so
+Protocols h2 http/1.1
+```
+
+---
+
+`ASP.NET Core` uygulamalarınızı bu proxy/web sunucularının arkasında çalıştırıyorsanız, ekstra yapmanız gereken bir işlem bulunmuyor çünkü ilgili uygulamalar backend ile HTTP/1.1 üzerinden iletişim kurarken, client ile HTTP/2 üzerinden konuşabiliyor.
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+
+```
+ASPNETCORE_URLS=https://&#43;:443
+ASPNETCORE_Kestrel__EndpointDefaults__Protocols=Http2
+ASPNETCORE_Kestrel__Certificates__Default__Path=/path/to/cert.pfx
+ASPNETCORE_Kestrel__Certificates__Default__Password=1
+```
+
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+ortam değişkenlerini kullanarak `self-hosted` uygulamalarınızı HTTP/2 protokolü üzerinden sunum yapar hale getirebilirsiniz.
+
+---
+
+class: middle, center
+
+# gRPC UYGULAMALARINDA DİKKAT EDİLMESİ GEREKEN TEMEL NOKTALAR NELER?
+
+---
+
+gRPC gün itibariyle 13 farklı programlama diliyle implementasyonu yapılmış bir proje.
+
+Dolayısıyla **`.proto`** uzantılı protocol buffer dilinin temel özelliklerine hakim olmak hem sunucu hem de istemci uygulamaları geliştirmek için yeterli.
+
+&lt;br /&gt;
+
+Bazı püf noktalar;
+
+- Dizi tipindeki mesaj alanları için `repeated` anahtar kelimesini kullanmak - `streaming` yerine -.
+
+- 1 ~ 15 aralığında numaralanmış alanların, en sık kullanılan mesaj alanları olmasına özen gösterilmesi (1 byte olarak encode edilir).
+
+- Mesaj değişikliklerinde silinecek bir alan varsa, alana ait numaranın tekrar kullanılmaması için `reserved` anahtar kelimesi ile rafa kaldırılması.
+
+- `import` anahtar kelimesini kullanarak **.proto** dosyalarını okunabilir boyutlarda tutmak.
+
+---
+
+İlgili standartlarda yazılmış protocol buffer tanımlamalarını tüketen backend istemcileri ile sunucu arasındaki iletişim olağan.
+
+Ancak iş `$.post(&#34;https://grpc-service/greet.Greeter/SayHello&#34;)` ifadesine benzer - RESTful servis uçlarına iletilen browser çağrıları gibi - çağrılara geldiğinde gRPC eksik kalıyor(du).
+
+Çünkü tarayıcılar henüz, native gRPC protokolünü destekleyebilir durumda değil ve beklenen en iyimser süre 1.5/2 yıl. Bu sebeple hem **HTTP/1.1** hem de **HTTP/2** ile çalışabilen **gRPC-Web** çözümü ortaya çıkıyor.
+
+.center[![:scale 35%](assets/grpc-web-proxy.png)]
+
+---
+
+### **.NET CORE gRPC Server** uygulamalarınızı **backend** istemci uygulamalarının tüketebilmesi için;
+
+- **Self-hosted** modelde, **Kestrel** web sunucusu üzerinden sunabilirsiniz. Windows&#39;ta servis olarak, Linux dağıtımlarında `systemd` servis yöneticisiyle ya da platform bağımsız olarak bir container içerisinde.
+
+- **IIS** arkasından sunabilirsiniz, ancak en az **10.0** versiyonuna sahip olduğunuzdan emin olmalısınız.
+
+- **Envoy**, **Nginx** ya da **HAProxy** gibi reverse proxy sunucularının arkasından sunabilirsiniz.
+
+- **Kong** gibi API gateway uygulamalarının arkasından sunabilirsiniz.
+
+---
+
+### **.NET CORE gRPC Server** uygulamalarınızı **browser** istemci uygulamalarının tüketebilmesi için;
+
+2020 yılının başına kadar **gRPC-Web** çözümü olarak -_`application/grpc` tipindeki istekleri `application/grpc-web&#43;proto` ya da `application/grpc-web-text`&#39; çevirmek amacıyla_- **Envoy** en makul çözüm idi.
+
+**Kong** çözümü ise aynı servis ucuna yönelmiş _(örneğin `/greet.Greeter/SayHello`)_, hem gRPC-web hem de native gRPC isteklerini aynı anda çözümleyebilir durumda değil.
+
+&lt;br /&gt;
+
+**SUBJEKTİF YORUM:** `Grpc.AspNetCore.Web` çözümünün ortaya çıkması ile birlikte bu tek ürün zorunluluğu ortadan kalktı (diyebiliriz).
+
+Mevcut gRPC servis projelerinize ekleyeceğiniz bir paket ile, tüm - ya da seçeceğiniz - servislerin hem backend hem de browser istemcileri tarafından tüketilmesini sağlayabilirsiniz.
+
+&lt;br /&gt;
+
+⚠ _Yalnızca **unary** ve **server streaming** tipindeki servisler, ürün bağımsız, gRPC-Web ile kullanılabiliyor!_
+
+---
+
+class: middle, center
+
+# IMPLEMENTASYON ÖRNEKLERİ
+
+---
+
+.center[![:scale 20%](assets/warning.png)]
+
+&gt; _Münkünse servislerinizi (gRPC veya RESTful), UI projelerinizden ayrı olarak sunun. Browser’lar ya da diğer modern HttpClient uygulamaları **HTTP/2**’ye tam uyum sağlasa da crawler’lar hala **HTTP/1.1** konusunda takıntılı durumda!_
+
+ &lt;br /&gt;
+
+&gt; _Bu sebeple servislerinizin **`ASPNETCORE_Kestrel__EndpointDefaults__Protocols`** ortam değişkenini **`Http2`** olarak ayarlarken, UI projelerinizde varsayılan değer olan **`Http1AndHttp2`** olarak bırakmakta fayda var._
+</textarea>
+<script src=https://remarkjs.com/downloads/remark-latest.min.js></script><script>remark.macros.scale=function(percentage){var url=this;return '<img src="'+url+'" style="width: '+percentage+'" />';};var slideshow=remark.create({highlightStyle:"github",ratio:'16:9',navigation:{scroll:false}});</script></body></html>
