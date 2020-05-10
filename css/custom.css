@@ -1,0 +1,43 @@
+.about-profile-image img {
+  display: block;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  float: left;
+  margin-right: 20px;
+}
+
+.list-item .meta {
+  flex-basis: 8em;
+}
+
+.header-info {
+  margin-top: 3em;
+}
+
+.header:after {
+  margin-top: 3em;
+  margin-left: 10px;
+}
+
+.header-info .title {
+  padding-left: 10px;
+}
+
+.header-bg {
+  margin-top: -60px;
+  margin-bottom: -80px;
+  max-width: 90%;
+}
+
+.entry-nav:before,
+.prev-entry ~ .next-entry:before,
+.comments-container #disqus_thread:before,
+.entry + .home-sections-container .home-sections:before,
+.home-section + .home-section:before,
+.footer:before {
+  margin-left: 10px;
+}
