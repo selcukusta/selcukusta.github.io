@@ -7,7 +7,7 @@ class: middle, center
 
 class: middle, center
 
-![Cover](assets/cover.png)
+![Cover](../assets/grpc-web/cover.png)
 
 ---
 
@@ -32,7 +32,7 @@ class: middle, center
 
 `.NET` ekosisteminde `WCF` servislerle çalışmış kişiler için hem terminoloji hem de uygulama geliştirme bakımından benzer noktaları oldukça fazla.
 
-.center[![:scale 40%](assets/wcf-grpc.png)]
+.center[![:scale 40%](../assets/grpc-web/wcf-grpc.png)]
 
 ---
 
@@ -111,7 +111,7 @@ class: middle, center
   ]
 
 .c70[
-![:scale 90%](assets/unary.jpg)
+![:scale 90%](../assets/grpc-web/unary.jpg)
 ]
 
 ]
@@ -124,7 +124,7 @@ class: middle, center
 
 .cols[
 .c70[
-![:scale 90%](assets/streaming.jpg)
+![:scale 90%](../assets/grpc-web/streaming.jpg)
 ]
 
 .c30[
@@ -157,7 +157,7 @@ class: middle, center
 
 gRPC istemcileri, sunuculara ne kadar süre bekleyeceğini söyleyebilirler; sunucular ise cevap dönebilmek için ne kadar süreleri kaldığını kontrol edebilirler. Bazı dillerde `timeout` olarak da adlandırılır.
 
-.center[![:scale 60%](assets/deadline.jpg)]
+.center[![:scale 60%](../assets/grpc-web/deadline.jpg)]
 
 ---
 
@@ -193,7 +193,7 @@ class: middle, center
 
 - En küçük iletişim birimi olan frameleri (data ve header bilgilerini taşıyan paketler) sıralı bir şekilde bir mesaj haline getiriyor ve bu mesajların iki yönlü haberleşme yöntemi (stream) ile istemci - sunucu arasında taşınmasını sağlıyor.
 
-.center[![:scale 55%](assets/frame.svg)]
+.center[![:scale 55%](../assets/grpc-web/frame.svg)]
 
 ---
 
@@ -207,7 +207,7 @@ class: middle, center
 
 class: middle, center
 
-[![:scale 55%](assets/http2.png)](https://imagekit.io/demo/http2-vs-http1)
+[![:scale 55%](../assets/grpc-web/http2.png)](https://imagekit.io/demo/http2-vs-http1)
 
 ---
 
@@ -316,7 +316,7 @@ Ancak iş `$.post(&#34;https://grpc-service/greet.Greeter/SayHello&#34;)` ifades
 
 Çünkü tarayıcılar henüz, native gRPC protokolünü destekleyebilir durumda değil ve beklenen en iyimser süre 1.5/2 yıl. Bu sebeple hem **HTTP/1.1** hem de **HTTP/2** ile çalışabilen **gRPC-Web** çözümü ortaya çıkıyor.
 
-.center[![:scale 35%](assets/grpc-web-proxy.png)]
+.center[![:scale 35%](../assets/grpc-web/grpc-web-proxy.png)]
 
 ---
 
@@ -356,7 +356,7 @@ class: middle, center
 
 ---
 
-.center[![:scale 20%](assets/warning.png)]
+.center[![:scale 20%](../assets/grpc-web/warning.png)]
 
 &gt; _Münkünse servislerinizi (gRPC veya RESTful), UI projelerinizden ayrı olarak sunun. Browser’lar ya da diğer modern HttpClient uygulamaları **HTTP/2**’ye tam uyum sağlasa da crawler’lar hala **HTTP/1.1** konusunda takıntılı durumda!_
 
