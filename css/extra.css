@@ -1,0 +1,25 @@
+.about-profile-image {
+  display: block;
+}
+
+.about-profile-image img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  float: left;
+  margin-right: 20px;
+}
+sup {
+  font-size: 0.7em;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 1.1em;
+}
